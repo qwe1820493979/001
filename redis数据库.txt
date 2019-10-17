@@ -1,0 +1,167 @@
+redis：
+
+	sql:mysql sqlserver oracle  db2  结构化查询语言
+		表:列  数据类型
+		结构化查询语言  数据范围
+	nosql:       非结构化查询语言   非关系型数据库
+		String
+		集合
+
+		redis  memcache
+	redis:是一个数据库  帮助我们存储数据的   快速的读取数据
+		存key:value
+		username:xiaolong
+	内存高速缓存数据库
+		数据直接在内存中进行存取
+	
+	可以定时将内存中的数据持久化到本地磁盘
+redis缺点:  内存中存储  redis内存空间一定小于服务器可用的内存空间
+
+redis的适用场景:
+	1.数据定时更新(不能时时更行,定时比较长)
+	2.将通用的,被访问量大的数据放到redis中
+
+
+
+
+
+
+
+
+
+
+
+
+
+27.0.0.1:6379> ping
+PONG
+127.0.0.1:6379> set username wangyi
+OK
+127.0.0.1:6379> get username
+"wangyi"
+127.0.0.1:6379> set address zhengzhou
+OK
+127.0.0.1:6379> get address
+"zhengzhou"
+127.0.0.1:6379> keys *
+1) "address"
+2) "username"
+127.0.0.1:6379> set username lirui
+OK
+127.0.0.1:6379> ttl username  
+(integer) -1
+127.0.0.1:6379> set address beijing EX 20
+OK
+127.0.0.1:6379> ttl address
+(integer) 10
+127.0.0.1:6379> ttl address    查询有效期时间 秒单位
+(integer) -2
+127.0.0.1:6379> set address nanjing PX 10000    设置有效时间
+OK
+127.0.0.1:6379> ttl address
+(integer) 6
+127.0.0.1:6379> set address nanjing PX 10000
+OK
+127.0.0.1:6379> pttl address   查询有效期时间 毫秒单位
+(integer) 4148
+127.0.0.1:6379> select 1       切换库
+OK
+127.0.0.1:6379[1]> keys *
+(empty list or set)
+127.0.0.1:6379[1]> set class java
+OK
+127.0.0.1:6379[1]> exists class
+(integer) 1
+127.0.0.1:6379[1]> exists uname
+(integer) 0
+127.0.0.1:6379[1]> rename class classname
+OK
+127.0.0.1:6379[1]> keys *
+1) "classname"
+127.0.0.1:6379[1]> del classname       删除
+(integer) 1
+127.0.0.1:6379[1]> keys *
+(empty list or set)
+127.0.0.1:6379[1]> set address zhangsan
+OK
+127.0.0.1:6379[1]> move address 2
+(integer) 1
+127.0.0.1:6379[1]> set adddress zhengzhou
+OK
+127.0.0.1:6379[1]> keys *
+1) "adddress"
+127.0.0.1:6379[1]> ttl address
+(integer) -2
+127.0.0.1:6379[1]> ttl address
+(integer) -2
+127.0.0.1:6379[1]> set address zhengzhou
+OK
+127.0.0.1:6379[1]> ttl address
+(integer) -1
+127.0.0.1:6379[1]> expire address 60
+(integer) 1
+127.0.0.1:6379[1]> ttl address
+(integer) 56
+127.0.0.1:6379[1]> persist address
+(integer) 1
+127.0.0.1:6379[1]> ttl address
+(integer) -1
+127.0.0.1:6379[1]> hset boy name zhangzhonggang
+(integer) 1
+127.0.0.1:6379[1]> hget boy name
+"zhangzhonggang"
+127.0.0.1:6379[1]> hset boy username zhineng
+(integer) 1
+127.0.0.1:6379[1]> hgetall boy
+1) "name"
+2) "zhangzhonggang"
+3) "username"
+4) "zhineng"
+127.0.0.1:6379[1]> lpush addresses beijing
+(integer) 1
+127.0.0.1:6379[1]> ipush addresses shanghai
+(error) ERR unknown command 'ipush'
+127.0.0.1:6379[1]> ipush address shanghai
+(error) ERR unknown command 'ipush'
+127.0.0.1:6379[1]> lupsh addresses shanghai
+(error) ERR unknown command 'lupsh'
+127.0.0.1:6379[1]> lpush address shanghai
+(error) WRONGTYPE Operation against a key holding the wrong kind of value
+127.0.0.1:6379[1]> lpush addresses shanghai
+(integer) 2
+127.0.0.1:6379[1]> lrange daaresses 0 2
+(empty list or set)
+127.0.0.1:6379[1]> lrange addresses 0 2
+1) "shanghai"
+2) "beijing"
+127.0.0.1:6379[1]> lset addresses 0 nanjing
+OK
+127.0.0.1:6379[1]> lrange addresses 0 2
+1) "nanjing"
+2) "beijing"
+127.0.0.1:6379[1]> lset addresses 0 tianjing
+OK
+127.0.0.1:6379[1]> lrange addresses 0 2
+1) "tianjing"
+2) "beijing"
+127.0.0.1:6379[1]> llen addresses
+(integer) 2
+127.0.0.1:6379[1]> type addresses
+list
+127.0.0.1:6379[1]> type address
+string
+127.0.0.1:6379[1]> keys *
+1) "address"
+2) "adddress"
+3) "addresses"
+4) "boy"
+127.0.0.1:6379[1]> type boy
+hash
+127.0.0.1:6379[1]> keys body
+(empty list or set)
+127.0.0.1:6379[1]> hgetall boy
+1) "name"
+2) "zhangzhonggang"
+3) "username"
+4) "zhineng"
+127.0.0.1:6379[1]>
